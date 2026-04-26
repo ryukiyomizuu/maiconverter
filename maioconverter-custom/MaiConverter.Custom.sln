@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaiConverter.Custom.Cli", "src\\MaiConverter.Custom.Cli\\MaiConverter.Custom.Cli.csproj", "{A9E8F5D3-0B6A-4D4C-8B3D-0C9E4B1A6B10}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaiConverter.Custom.Core", "src\\MaiConverter.Custom.Core\\MaiConverter.Custom.Core.csproj", "{3B5A1BE0-9F72-4D5B-8B1F-8C8B9AA9C2D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaiConverter.Custom.MaiLib", "src\\MaiConverter.Custom.MaiLib\\MaiConverter.Custom.MaiLib.csproj", "{E1BDE9F6-6C4B-4C2E-8AA6-0E9C0D3A5C5F}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {A9E8F5D3-0B6A-4D4C-8B3D-0C9E4B1A6B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {A9E8F5D3-0B6A-4D4C-8B3D-0C9E4B1A6B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {A9E8F5D3-0B6A-4D4C-8B3D-0C9E4B1A6B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {A9E8F5D3-0B6A-4D4C-8B3D-0C9E4B1A6B10}.Release|Any CPU.Build.0 = Release|Any CPU
+        {3B5A1BE0-9F72-4D5B-8B1F-8C8B9AA9C2D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {3B5A1BE0-9F72-4D5B-8B1F-8C8B9AA9C2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {3B5A1BE0-9F72-4D5B-8B1F-8C8B9AA9C2D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {3B5A1BE0-9F72-4D5B-8B1F-8C8B9AA9C2D1}.Release|Any CPU.Build.0 = Release|Any CPU
+        {E1BDE9F6-6C4B-4C2E-8AA6-0E9C0D3A5C5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {E1BDE9F6-6C4B-4C2E-8AA6-0E9C0D3A5C5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {E1BDE9F6-6C4B-4C2E-8AA6-0E9C0D3A5C5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {E1BDE9F6-6C4B-4C2E-8AA6-0E9C0D3A5C5F}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal

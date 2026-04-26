@@ -1,0 +1,6 @@
+[submodule "_thirdparty/MaiLib"]
+	path = _thirdparty/MaiLib
+	url = https://github.com/LonerYlon/maioconverter.git
+[submodule "_thirdparty/MaichartConverter-src"]
+	path = _thirdparty/MaichartConverter-src
+	url = https://github.com/Neskol/MaichartConverter
