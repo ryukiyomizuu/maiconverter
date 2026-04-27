@@ -48,5 +48,10 @@ print()
 print("Done! Wiki is live at:")
 print("  https://github.com/LonerYlon/maiconverter/wiki")
 
-# cleanup
-shutil.rmtree(WIKI_CLONE)
+# cleanup (use onerror to handle read-only .git objects on Windows)
+def _remove_readonly(func, path, _):
+    import stat
+    Path(path).chmod(stat.S_IWRITE)
+    func(path)
+
+shutil.rmtree(WIKI_CLONE, onerror=_remove_readonly)
