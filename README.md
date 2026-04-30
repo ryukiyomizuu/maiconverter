@@ -39,6 +39,7 @@
   - [6 · Image Conversion](#6--image-conversion-ab--png)
 - [Database Options Reference](#database-options-reference)
 - [Output Formats](#output-formats)
+- [Settings](#settings)
 - [Credits & Third-Party Tools](#credits--third-party-tools)
 
 ---
@@ -48,13 +49,19 @@
 | Feature | Details |
 |---|---|
 | **MP4** | Decrypt `.dat` USM videos → `.mp4` (single or batch) |
-| **MP3** | Decode `.awb` audio streams → `.mp3` (single or batch) |
-| **FLAC** | Decode `.awb` audio streams → `.flac` (lossless, single or batch) |
+| **MP3** | Decode `.awb` audio streams → `.mp3` (single or batch, parallel workers) |
+| **FLAC** | Decode `.awb` audio streams → `.flac` (lossless, single or batch, parallel workers) |
 | **Chart** | Compile `.ma2` charts → Simai format for custom clients |
 | **Database** | Full AXXX folder pipeline → categorised song packages |
 | **Image** | Extract Unity `.ab` bundles → `.png` jacket / background images |
 | **ADX export** | Package output as `.adx` (AstroDX format) per-track or per-category |
 | **Batch mode** | Process multiple AXXX folders in one run |
+| **Progress bar** | Inline `████░░░` progress bar during batch conversions |
+| **Retry on failure** | Configurable retry attempts per file; prompts to retry all failed files at end |
+| **Parallel workers** | MP3/FLAC batch runs use multiple threads (default: 2, configurable in Settings) |
+| **Last-path recall** | Remembers last used input/output path per mode (Tab / → to fill) |
+| **Completion screen** | Shows elapsed time, success/fail counts, open-folder shortcut, and optional notification |
+| **Temp file cleanup** | Configurable: delete after each file, keep all, or delete after full run |
 | **Auto asset detection** | Finds `music*`, `Jackets`, video folders inside AXXX automatically |
 | **Resume-safe** | Per-folder output policy (overwrite / skip) |
 | **CLI mode** | Full scriptable interface for automation pipelines |
@@ -271,7 +278,10 @@ Global flags available on all commands:
 
 Decrypts maimai USM video files and encodes them to `.mp4`.
 
-**Interactive:** Select single or batch, provide input path and output folder.
+> **⚠ Note on folder paths:** `crid` does not support folder names with spaces (e.g. `Telegram Desktop` will fail — use `Telegram` instead).
+
+**Interactive:** Select single or batch, provide input path and output folder.  
+Tab or → fills the last used path.
 
 **CLI:**
 ```bash
@@ -288,7 +298,8 @@ python maimai.py mp4 batch --input DIR --output OUTDIR [--policy overwrite|skip]
 
 ### 2 · MP3 Conversion (`.awb` → `.mp3`)
 
-Decodes ACB/AWB audio container streams to `.mp3`.
+Decodes ACB/AWB audio container streams to `.mp3`.  
+Batch mode supports **parallel workers** (default: 2, configurable in Settings).
 
 **CLI:**
 ```bash
@@ -302,7 +313,8 @@ python maimai.py mp3 batch  --input DIR       --output OUTDIR [--policy overwrit
 
 ### 3 · FLAC Conversion (`.awb` → `.flac`)
 
-Same pipeline as MP3 but outputs lossless `.flac` files.
+Same pipeline as MP3 but outputs lossless `.flac` files.  
+Batch mode supports **parallel workers** (default: 2, configurable in Settings).
 
 **CLI:**
 ```bash
@@ -437,6 +449,22 @@ python maimai.py image batch  --input DIR       --output OUTDIR [--policy overwr
 | `.flac` | Lossless audio |
 | `.zip` | Zip archive of converted song folder |
 | `.adx` | AstroDX song package (zip renamed to `.adx`) |
+
+---
+
+## Settings
+
+Accessible from the main menu via **[S] Settings**. All settings are saved to `.mas_settings.json`.
+
+| Setting | Options | Default | Description |
+|---|---|---|---|
+| **Display mode** | Verbose / Normal / Silent | Normal | Controls how much output is shown during conversion |
+| **Temp file cleanup** | Auto / Keep / Batch | Auto (delete after each file) | When intermediate temp files are deleted |
+| **Retry attempts** | 1× / 2× / 3× | 1× (no retry) | How many times to retry a failed file before marking it failed |
+| **Parallel workers** | 1–8 | 2 | Number of threads for MP3/FLAC batch conversion (1 = sequential) |
+| **Notify on complete** | On / Off | On | Beep + Windows balloon notification when a batch finishes |
+
+> **Temp file cleanup** does not apply to Image (`.ab` → `.png`) conversion.
 
 ---
 
