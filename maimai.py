@@ -1679,7 +1679,17 @@ def prompt_chart():
     clear_screen()
     show_header()
 
-    input_path = ask_existing_file("Enter path to your chart file (.ma2): ")
+    s = load_settings()
+    last_in = s.get("last_chart_input", "")
+
+    while True:
+        raw_in = _ask_with_hint("Enter path to your chart file (.ma2): ", last_in)
+        input_path = Path(raw_in)
+        if input_path.exists() and input_path.is_file():
+            break
+        print("File not found or not a file.")
+
+    update_setting("last_chart_input", str(input_path))
     output_path = ask_output_dir("Enter output folder: ")
 
     fmt = ask_chart_format_interactive()
@@ -1771,6 +1781,8 @@ _SETTINGS_DEFAULTS = {
     "last_mp3_input": "",
     "last_flac_input": "",
     "last_image_input": "",
+    "last_chart_input": "",
+    "last_db_input": "",
 }
 
 def load_settings() -> dict:
@@ -2009,7 +2021,19 @@ def prompt_database():
     clear_screen()
     show_header()
 
-    detection = ask_axxx_or_batch("(Required) Enter path to your AXXX folder or batch root: ")
+    s = load_settings()
+    last_db_in = s.get("last_db_input", "")
+
+    while True:
+        raw_db = _ask_with_hint("(Required) Enter path to your AXXX folder or batch root: ", last_db_in)
+        _p = Path(raw_db)
+        if _p.exists() and _p.is_dir():
+            detection = detect_axxx_input(_p)
+            if detection:
+                update_setting("last_db_input", str(_p))
+                break
+        print("Not an AXXX folder or a folder containing AXXX folders (e.g., A001, M100).")
+
     mode_type = detection["mode_type"]
     axxx_path = detection.get("axxx_path")
     axxx_paths = detection.get("axxx_paths") or []
@@ -4113,6 +4137,10 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
         elif output_policy == "overwrite":
             clear_folder_contents(actual_output_dir)
 
+    _autobuilt_music_path = None
+    _autobuilt_video_path = None
+    _autobuilt_cover_path = None
+
     if payload.get("auto_convert_assets"):
         axxx_root = payload["axxx_path"]
         asset_policy = payload.get("existing_assets_policy", "skip")
@@ -4137,10 +4165,10 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
                     progress_callback=progress_step,
                 )
                 payload["music_path"] = music_path
+                _autobuilt_music_path = music_path
                 prep_missing += m
                 prep_failed += f
                 prep_logs.extend(logs)
-                # Never auto-delete musicMP3 — it lives inside the AXXX source folder
 
         if payload["video_path"] is None and "video" in selected_targets:
             _existing_video = axxx_root / "Movie"
@@ -4162,10 +4190,10 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
                     progress_callback=progress_step,
                 )
                 payload["video_path"] = video_path
+                _autobuilt_video_path = video_path
                 prep_missing += m
                 prep_failed += f
                 prep_logs.extend(logs)
-                # Never auto-delete Movie — it lives inside the AXXX source folder
 
         if payload["cover_path"] is None and "cover" in selected_targets:
             _existing_cover = axxx_root / "Jackets"
@@ -4187,10 +4215,10 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
                     progress_callback=progress_step,
                 )
                 payload["cover_path"] = cover_path
+                _autobuilt_cover_path = cover_path
                 prep_missing += m
                 prep_failed += f
                 prep_logs.extend(logs)
-                # Never auto-delete Jackets — it lives inside the AXXX source folder
 
     payload["auto_generated_temp_dirs"] = auto_temp_dirs
 
@@ -4236,6 +4264,15 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
                 print(reason)
             print()
             wait_enter("Press Enter...")
+
+        _db_cleanup_pol = load_settings().get("temp_cleanup", "auto")
+        if _db_cleanup_pol in ("auto", "batch"):
+            for _ab_path in [p for p in (_autobuilt_music_path, _autobuilt_video_path, _autobuilt_cover_path) if p]:
+                _ab = Path(_ab_path)
+                if _ab.exists():
+                    for _f in _ab.iterdir():
+                        if _f.is_file():
+                            safe_delete(_f)
 
         return 0, prep_missing, prep_failed + 1, log_path
 
@@ -4374,6 +4411,15 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
             print()
             countdown_after_conversion(5, label="Returning to next step")
 
+        _db_cleanup_pol = load_settings().get("temp_cleanup", "auto")
+        if _db_cleanup_pol in ("auto", "batch"):
+            for _ab_path in [p for p in (_autobuilt_music_path, _autobuilt_video_path, _autobuilt_cover_path) if p]:
+                _ab = Path(_ab_path)
+                if _ab.exists():
+                    for _f in _ab.iterdir():
+                        if _f.is_file():
+                            safe_delete(_f)
+
         if returncode == 0:
             return 1, prep_missing, prep_failed, log_path
 
@@ -4396,6 +4442,15 @@ def run_database_shell_single(payload, display_mode, resolved_tools):
                 f.write("\n")
             f.write("EXCEPTION:\n")
             f.write(str(e) + "\n")
+
+        _db_cleanup_pol = load_settings().get("temp_cleanup", "auto")
+        if _db_cleanup_pol in ("auto", "batch"):
+            for _ab_path in [p for p in (_autobuilt_music_path, _autobuilt_video_path, _autobuilt_cover_path) if p]:
+                _ab = Path(_ab_path)
+                if _ab.exists():
+                    for _f in _ab.iterdir():
+                        if _f.is_file():
+                            safe_delete(_f)
 
         print(f"Error: {e}")
         wait_enter()
